@@ -8,6 +8,7 @@ require (
 	github.com/google/gopacket v1.1.19 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/goproxy/goproxy v0.11.0 // indirect
+	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/zan8in/masscan v0.0.0-20220826232324-01714b07c144 // indirect
 	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550 // indirect
