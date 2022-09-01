@@ -81,7 +81,7 @@ func main() {
 		masscan.SetParamPorts(PORTRANGE2),
 		masscan.EnableDebug(),
 		masscan.SetParamWait(0),
-		masscan.SetParamRate(1000),
+		masscan.SetParamRate(RATE2),
 	)
 
 	if err != nil {
