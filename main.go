@@ -64,10 +64,12 @@ func main() {
 	IPRANGE1 := flag.String("range", "127.0.0.1", "IP range to scan")
 	PORTRANGE1 := flag.String("port-range", "25565", "Port range to scan")
 	OUTFILE1 := flag.String("output", "output.txt", "You can't disable it")
+	RATE1 := flag.Int("rate", 1000, "masscan rate")
 	flag.Parse()
 	IPRANGE2 := *IPRANGE1
 	PORTRANGE2 := *PORTRANGE1
 	OUTFILE2 := *OUTFILE1
+	RATE2 := *RATE1
 
 	var (
 		scannerResult []masscan.ScannerResult
