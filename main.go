@@ -1,15 +1,57 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"log"
 	"os"
-	"strconv"
+	"strings"
+	"text/template"
+	"time"
 
-	"github.com/alteamc/minequery/v2"
 	"github.com/zan8in/masscan"
+
+	"github.com/Tnze/go-mc/bot"
+	"github.com/Tnze/go-mc/chat"
+	"github.com/google/uuid"
 )
+
+type status struct {
+	Description chat.Message
+	Players     struct {
+		Max    int
+		Online int
+		Sample []struct {
+			ID   uuid.UUID
+			Name string
+		}
+	}
+	Version struct {
+		Name     string
+		Protocol int
+	}
+	Favicon Icon
+	Delay   time.Duration
+}
+type Icon string
+
+var outTemp = template.Must(template.New("output").Parse(`
+Version: {{ .Version.Name }} ({{ .Version.Protocol }})
+Description:
+{{ .Description }}
+Players: {{ .Players.Online }}/{{ .Players.Max }}{{ range .Players.Sample }}
+- {{ .Name }} {{ end }}
+`))
+
+func (s *status) String() string {
+	var sb strings.Builder
+	err := outTemp.Execute(&sb, s)
+	if err != nil {
+		panic(err)
+	}
+	return sb.String()
+}
 
 func main() {
 	//context, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
@@ -56,26 +98,23 @@ func main() {
 		for stdout.Scan() {
 			srs := masscan.ParseResult(stdout.Bytes())
 			scannerResult = append(scannerResult, srs)
-			if i, err := strconv.Atoi(srs.Port); err == nil {
-				pinger := minequery.NewPinger(
-					minequery.WithUseStrict(true),
-				)
-				res, err := pinger.Ping17(srs.IP, int(i))
-				if err == nil {
-					motd := res.Description.(map[string]interface{})["text"]
-					f, err := os.OpenFile(fmt.Sprint(OUTFILE2), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-					if err == nil {
-						if motd == "" {
-							fmt.Printf("%s (%s) (%s:%s) (%s/%s) Unable to get motd\n", res.VersionName, fmt.Sprint(res.ProtocolVersion), srs.IP, srs.Port, fmt.Sprint(res.OnlinePlayers), fmt.Sprint(res.MaxPlayers))
-							f.WriteString(fmt.Sprintf("%s (%s) (%s:%s) (%s:%s) Unable to get motd\n", res.VersionName, fmt.Sprint(res.ProtocolVersion), srs.IP, srs.Port, fmt.Sprint(res.OnlinePlayers), fmt.Sprint(res.MaxPlayers)))
-						} else if motd != "" {
-							fmt.Printf("%s (%s) (%s:%s) (%s/%s) %s\n", res.VersionName, fmt.Sprint(res.ProtocolVersion), srs.IP, srs.Port, fmt.Sprint(res.OnlinePlayers), fmt.Sprint(res.MaxPlayers), fmt.Sprint(res.Description.(map[string]interface{})["text"]))
-							f.WriteString(fmt.Sprintf("%s (%s) (%s:%s) (%s/%s) %s\n", res.VersionName, fmt.Sprint(res.ProtocolVersion), srs.IP, srs.Port, fmt.Sprint(res.OnlinePlayers), fmt.Sprint(res.MaxPlayers), fmt.Sprint(res.Description.(map[string]interface{})["text"])))
-						}
-					}
-				} else if err != nil {
-					fmt.Println(err)
-				}
+			resp, delay, err := bot.PingAndList(fmt.Sprint(srs.IP + ":" + srs.Port))
+			if err != nil {
+				fmt.Printf("Ping and list server fail: %v", err)
+				os.Exit(1)
+			}
+			var s status
+			err = json.Unmarshal(resp, &s)
+			if err != nil {
+				fmt.Print("Parse json response fail:", err)
+				os.Exit(1)
+			}
+			s.Delay = delay
+			//ss := *&s
+			fmt.Println("IP: " + srs.IP + ":" + srs.Port + fmt.Sprint(&s))
+			f, err := os.OpenFile(fmt.Sprint(OUTFILE2), os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+			if err == nil {
+				f.WriteString("IP: " + srs.IP + ":" + srs.Port + fmt.Sprint(&s))
 			}
 		}
 	}()
