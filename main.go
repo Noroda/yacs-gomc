@@ -100,7 +100,7 @@ func main() {
 		for stdout.Scan() {
 			srs := masscan.ParseResult(stdout.Bytes())
 			scannerResult = append(scannerResult, srs)
-			resp, delay, err := bot.PingAndList(fmt.Sprint(srs.IP + ":" + srs.Port))
+			resp, delay, err := bot.PingAndListTimeout(fmt.Sprint(srs.IP + ":" + srs.Port), 5*time.Second)
 			if err != nil {
 				fmt.Printf("Ping and list server fail: %v", err)
 				os.Exit(1)
