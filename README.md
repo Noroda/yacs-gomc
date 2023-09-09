@@ -1,17 +1,23 @@
-# Crappiest Minecraft Server Scanner!
-You **don't** want to use this, here's why:
-- sometimes it doesn't wants to display motd
-- sometimes scanner just skips IP address
-- color codes and formatting codes are visible
-- omg I actually fixed this
+# YACS (With go-mc)
+YACS uses (https://github.com/Tnze/go-mc)[go-mc] and (https://github.com/zan8in/masscan)[masscan] libraries to scan the internet for minecraft servers, saving the results to the MongoDB database.
 
-# ***Use something better instead of this!***
-But if you decided to use this, then install masscan and run ``sudo go run main.go``
+# Stuff YACS collects:
+- Server IP
+- MOTD
+- Server Software
+- Players
+- Favicon
+Yes, it's not that much, but it was supposed to be used only to collect data rescanner could work with.
 
-flags:
+# Setup
+Ubuntu (sudo):
 ```
---range <ip-range> | IP range to scan | default is "127.0.0.1"
---port-range <port-range> | Port range to scan | default is "25565"
---output <file> | Change name of output file | default is "output.txt"
---rate <rate> | set masscan rate so it won't take so much time | default is "1000"
+apt install masscan golang
+git clone https://github.dev/Noroda/yacs-gomc.git
+nvim main.go # see lines 171 and 160
+cd yacs-gomc
+go build .
 ```
+
+# Usage
+Figure it out yourself.
