@@ -1,5 +1,5 @@
 # YACS (go-mc)
-YACS uses (https://github.com/Tnze/go-mc)[go-mc] and (https://github.com/zan8in/masscan)[masscan] libraries to scan the internet for minecraft servers, saving the results to the MongoDB database.
+YACS uses [go-mc](https://github.com/Tnze/go-mc) and [masscan](https://github.com/zan8in/masscan) libraries to scan the internet for minecraft servers, saving the results to the MongoDB database.
 
 # Stuff YACS collects:
 - Server IP
