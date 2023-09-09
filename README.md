@@ -7,6 +7,7 @@ YACS uses [go-mc](https://github.com/Tnze/go-mc) and [masscan](https://github.co
 - Server Software
 - Players
 - Favicon
+
 Yes, it's not that much, but it was supposed to be used only to collect data rescanner could work with.
 
 # Setup
