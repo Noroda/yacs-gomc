@@ -14,7 +14,7 @@ Ubuntu (sudo):
 ```
 apt install masscan golang
 git clone https://github.dev/Noroda/yacs-gomc.git
-nvim main.go # see lines 171 and 160
+nano main.go # see lines 171 and 160
 cd yacs-gomc
 go build .
 ```
